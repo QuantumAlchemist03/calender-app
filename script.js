@@ -1,7 +1,7 @@
 // Store events and track current date
 let currentDate = new Date()
 let events = JSON.parse(localStorage.getItem('events')) || {}
-
+// TODO: refactor month rendering to use a single function that can be called on month change
 function renderCalendar(year, month) {
 
   // Get first day of month (0=Sun, 6=Sat) and total days
