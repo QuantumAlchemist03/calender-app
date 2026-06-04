@@ -65,3 +65,19 @@ header button {
   border: none;
   cursor: default;
 }
+
+.day-number {
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+}
+
+.cell.has-event {
+  background: #e0f0ff;
+}
+
+.event-label {
+  font-size: 12px;
+  color: #1a73e8;
+  margin-top: 4px;
+}
