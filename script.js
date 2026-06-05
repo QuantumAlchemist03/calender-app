@@ -1,27 +1,21 @@
-// Store events and track current date
 let currentDate = new Date()
 let events = JSON.parse(localStorage.getItem('events')) || {}
-// TODO: refactor month rendering to use a single function that can be called on month change
-function renderCalendar(year, month) {
+let selectedKey = null
 
-  // Get first day of month (0=Sun, 6=Sat) and total days
+function renderCalendar(year, month) {
   const firstDay = new Date(year, month, 1).getDay()
   const daysInMonth = new Date(year, month + 1, 0).getDate()
 
-  // Update the header title
   document.getElementById('month-title').textContent =
     new Date(year, month).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })
 
-  // Clear the grid before re-rendering
   const grid = document.getElementById('calendar-grid')
   grid.innerHTML = ''
 
-  // Add empty cells before the 1st of the month
   for (let i = 0; i < firstDay; i++) {
     grid.innerHTML += `<div class="cell empty"></div>`
   }
 
-  // Add a cell for each day
   for (let day = 1; day <= daysInMonth; day++) {
     const key = `${year}-${month}-${day}`
     const hasEvent = events[key] ? 'has-event' : ''
@@ -33,15 +27,50 @@ function renderCalendar(year, month) {
       </div>`
   }
 
-  // Add click listener to each day cell
   document.querySelectorAll('.cell:not(.empty)').forEach(cell => {
-    cell.addEventListener('click', () => {
-      alert('Day ' + cell.dataset.key + ' clicked!')
-    })
+    cell.addEventListener('click', () => openModal(cell.dataset.key))
   })
 }
 
-// Prev/Next button logic
+function openModal(key) {
+  selectedKey = key
+  const [year, month, day] = key.split('-')
+
+  // Show a readable date in the modal title
+  const readable = new Date(year, month, day).toLocaleDateString('en-GB', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+  })
+
+  document.getElementById('modal-date').textContent = readable
+  document.getElementById('event-input').value = events[key] || ''
+  document.getElementById('modal').classList.remove('hidden')
+
+  // Only show Delete if an event already exists
+  const deleteBtn = document.getElementById('delete-btn')
+  deleteBtn.classList.toggle('hidden', !events[key])
+}
+
+document.getElementById('save-btn').addEventListener('click', () => {
+  const val = document.getElementById('event-input').value.trim()
+  if (val) events[selectedKey] = val
+  saveAndClose()
+})
+
+document.getElementById('delete-btn').addEventListener('click', () => {
+  delete events[selectedKey]
+  saveAndClose()
+})
+
+document.getElementById('close-btn').addEventListener('click', () => {
+  document.getElementById('modal').classList.add('hidden')
+})
+
+function saveAndClose() {
+  localStorage.setItem('events', JSON.stringify(events))
+  document.getElementById('modal').classList.add('hidden')
+  renderCalendar(currentDate.getFullYear(), currentDate.getMonth())
+}
+
 document.getElementById('prev').addEventListener('click', () => {
   currentDate.setMonth(currentDate.getMonth() - 1)
   renderCalendar(currentDate.getFullYear(), currentDate.getMonth())
@@ -52,5 +81,4 @@ document.getElementById('next').addEventListener('click', () => {
   renderCalendar(currentDate.getFullYear(), currentDate.getMonth())
 })
 
-// Kick everything off
 renderCalendar(currentDate.getFullYear(), currentDate.getMonth())
