@@ -20,8 +20,13 @@ function renderCalendar(year, month) {
     const key = `${year}-${month}-${day}`
     const hasEvent = events[key] ? 'has-event' : ''
 
-    grid.innerHTML += `
-      <div class="cell ${hasEvent}" data-key="${key}">
+    const today = new Date()
+const isToday = day === today.getDate() &&
+                month === today.getMonth() &&
+                year === today.getFullYear()
+
+grid.innerHTML += `
+  <div class="cell ${hasEvent} ${isToday ? 'today' : ''}" data-key="${key}">
         <span class="day-number">${day}</span>
         ${events[key] ? `<p class="event-label">${events[key]}</p>` : ''}
       </div>`
@@ -82,3 +87,9 @@ document.getElementById('next').addEventListener('click', () => {
 })
 
 renderCalendar(currentDate.getFullYear(), currentDate.getMonth())
+
+document.getElementById('modal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('modal')) {
+    document.getElementById('modal').classList.add('hidden')
+  }
+})
