@@ -131,3 +131,12 @@ header button {
 #close-btn { background: #eee; color: #333; }
 
 .hidden { display: none !important; }
+
+.cell.today {
+  border: 2px solid #1a73e8;
+  background: #f0f7ff;
+}
+
+.cell.today .day-number {
+  color: #1a73e8;
+}
